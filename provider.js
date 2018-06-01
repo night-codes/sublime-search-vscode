@@ -136,5 +136,10 @@ function openLink(fileName, line) {
 
 function runCommandSync(cmd) {
   let cleanedCommand = cmd.replace(/"/g, "\\\"")
-  return execSync(`${rgPath} --case-sensitive --line-number --column --hidden -e "${cleanedCommand}"`, execOpts)
+  let searchParts = cmd.match(/^([^:]+):\s?(.*)/);
+  let searchPath = searchParts[1];
+  let searchQuery = searchParts[2];
+  searchPath = vscode.workspace.rootPath + '/' + searchPath;
+ 
+  return execSync(`${rgPath} --case-sensitive --line-number --column --hidden -e "${searchQuery}" ${searchPath}`, execOpts)
 }
