@@ -1,25 +1,17 @@
-# searchy README
+# Sublime-like Search for Visual Studio Code / vs code
 
-Use ripgrep to pop open search results in new read only document.
+![Pretty Routes](https://raw.githubusercontent.com/garygreen/pretty-routes/master/sublime-search-vscode.png)
 
 ## Commands
 
-* `searchy.search` (Searchy - Search) - Pop open a dialog to ask for search term, and open the results in a nice read only document.  This uses ripgrep.
+*`searchy.search` (Searchy - Search) - Pop open a dialog to ask for search term, and open the results in a nice read only document.  This uses ripgrep.
 
-## Requirements
+## Usage
 
-N/A
+By default, code will be searched across the active workspace. If you would like to search in a particular folder, right click the folder in vs code, or manually enter the path relative to the active workspace in the popup:
 
-## Known Issues
+E.g.
 
-N/A
+>  resources/assets: &lt;search for this text&gt;
 
-## Release Notes
-
-### 0.0.2
-
-Search hidden files by default
-
-### 0.0.1
-
-Initial release
+Take note of the colon ":" which seperates the folder to search and search text.
