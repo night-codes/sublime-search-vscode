@@ -12,14 +12,21 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:searchy.search"
+        "onCommand:searchy.search",
+        "onCommand:searchy.searchInPath"
     ],
     "main": "./extension",
     "contributes": {
         "commands": [{
             "command": "searchy.search",
             "title": "Searchy - Search"
-        }],
+        },
+        {
+            "command": "searchy.searchInPath",
+            "title": "Searchy",
+            "when": "explorerResourceIsFolder"
+        }
+    ],
         "languages": [{
             "id": "searchy",
             "aliases": [
@@ -33,7 +40,16 @@
             "language": "searchy",
             "path": "./searchy-syntax.json",
             "scopeName": "source.searchy"
-        }]
+        }],
+        "menus": {
+            "explorer/context": [
+                {
+                    "when": "explorerResourceIsFolder",
+                    "command": "searchy.searchInPath",
+                    "group": "searchy"
+                }
+            ]
+        }
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",

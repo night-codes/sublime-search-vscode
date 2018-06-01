@@ -19,12 +19,16 @@ function activate(context) {
     }, provider)
   )
 
-  const disposable = commands.registerCommand('searchy.search', function () {
+  function showSearchyPopup(options)
+  {
+    options = options || {};
+    var value = options.path ? `${options.path}: ` : '';
     window.showInputBox({
-      value: null,
+      value: value,
       prompt: null,
       placeHolder: "Search term...",
-      password: false
+      password: false,
+      valueSelection: [value.length, value.length]
     }).then((cmd) => {
       if (cmd && cmd.length) {
         var uri = Uri.parse(SearchyProvider.scheme +
@@ -37,13 +41,26 @@ function activate(context) {
         )
       }
     })
-  })
+  }
+
+  const disposable = commands.registerCommand('searchy.search', function () {
+    showSearchyPopup();
+  });
 
   context.subscriptions.push(
     disposable,
     providerRegistrations,
     commands.registerCommand('searchy.openFile', searchyCommands.openFile)
   )
+
+  context.subscriptions.push(
+    commands.registerCommand('searchy.searchInPath', (f) => {
+      showSearchyPopup({
+        path: workspace.asRelativePath(f.fsPath)
+      });
+  }));
+
+
 }
 exports.activate = activate
 
