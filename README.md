@@ -15,3 +15,15 @@ E.g.
 >  resources/assets: &lt;search for this text&gt;
 
 Take note of the colon ":" which seperates the folder to search and search text.
+
+## Differences from malkomalko/searchy
+
+- Improved Window support
+- Support for context lines
+- Support for 'seperators' for between multiple matches in file
+- Added context menu
+- Lots of other improvements
+
+## Credit
+
+This repository has been forked from [malkomalko/searchy](https://github.com/malkomalko/searchy), mad props to Robert for his great work.
