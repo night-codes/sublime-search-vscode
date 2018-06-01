@@ -1,6 +1,7 @@
 const vscode = require('vscode')
 const querystring = require('querystring')
 const rgPath = require('vscode-ripgrep').rgPath
+const path = require('path')
 const {
   execSync
 } = require('child_process')
@@ -192,7 +193,7 @@ function parseSearchQuery(cmd)
   let searchParts = cmd.match(/^([^:]+):\s?(.*)/);
   let searchPath = searchParts[1];
   let searchQuery = searchParts[2];
-  searchPath = vscode.workspace.rootPath + '/' + searchPath;
+  searchPath = path.join(vscode.workspace.rootPath, searchPath);
 
   return {
     path: searchPath,
