@@ -1,10 +1,10 @@
 {
-    "name": "searchy",
-    "displayName": "Searchy",
-    "description": "Dumb search with results in a new document",
-    "version": "0.0.2",
-    "publisher": "malkomalko",
-    "repository": "malkomalko/searchy",
+    "name": "sublime-search-vscode",
+    "displayName": "Sublime Search",
+    "description": "Sublime-like search for vs code. Uses ripgrep and opens results in new document.",
+    "version": "0.0.1",
+    "publisher": "garreh",
+    "repository": "garreh/sublime-search-vscode",
     "engines": {
         "vscode": "^1.16.0"
     },
