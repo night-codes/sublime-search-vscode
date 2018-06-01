@@ -113,7 +113,7 @@ class SearchyProvider {
       let resultsForFile = resultsByFile[fileName].map((searchResult, index) => {
         lineNumber += 1
         if (searchResult.seperator) {
-          return '..';
+          return '  ..';
         } else {
           this.createDocumentLink(searchResult, lineNumber, searchQuery, uriString)
           return `  ${searchResult.line}: ${searchResult.result}`
@@ -121,10 +121,10 @@ class SearchyProvider {
       }).join('\n')
       lineNumber += 1
       return `
-${fileName}
+${fileName}:
 ${resultsForFile}`
     })
-    let header = [`${resultsArray.length} search results found`]
+    let header = [`${resultsArray.length} search results found for "${searchQuery.query}"`]
     let content = header.concat(lines)
 
     return content.join('\n')

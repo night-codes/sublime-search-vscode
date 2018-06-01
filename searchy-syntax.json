@@ -3,7 +3,7 @@
   "scopeName": "source.searchy",
   "patterns": [{
     "name": "comment.line.file",
-    "match": "file:.*$"
+    "match": "([^\\s]+):$"
   }, {
     "name": "keyword.locations",
     "match": "  \\d+:"
