@@ -1,6 +1,6 @@
 # Sublime-like Search for Visual Studio Code / vs code
 
-![Pretty Routes](https://raw.githubusercontent.com/garygreen/pretty-routes/master/sublime-search-vscode.png)
+![Screenshot](https://raw.githubusercontent.com/garygreen/sublime-search-vscode/master/sublime-search-vscode.png)
 
 ## Commands
 
