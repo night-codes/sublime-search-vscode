@@ -36,9 +36,10 @@ class SearchyProvider {
     const params = querystring.parse(uri.query)
     const cmd = params.cmd
 
+    let searchQuery = parseSearchQuery(cmd);
     let searchResults = null
     try {
-      searchResults = runCommandSync(cmd)
+      searchResults = runCommandSync(searchQuery)
     } catch (err) {
       return `${err}`
     }
@@ -54,7 +55,7 @@ class SearchyProvider {
     let resultsByFile = {}
 
     resultsArray.forEach((searchResult) => {
-      let splitLine = searchResult.split(/(.*?)(\d+):(\d+):(.*)/)
+      let splitLine = searchResult.split(/(.*?):(\d+):(\d+):(.*)/)
       let fileName = splitLine[1]
       if (fileName == null || !fileName.length) {
         return
@@ -73,12 +74,12 @@ class SearchyProvider {
       lineNumber += 1
       let resultsForFile = resultsByFile[fileName].map((searchResult, index) => {
         lineNumber += 1
-        this.createDocumentLink(searchResult, lineNumber, cmd, uriString)
+        this.createDocumentLink(searchResult, lineNumber, searchQuery, uriString)
         return `  ${searchResult.line}: ${searchResult.result}`
       }).join('\n')
       lineNumber += 1
       return `
-file://${rootPath}/${fileName}
+${fileName}
 ${resultsForFile}`
     })
     let header = [`${resultsArray.length} search results found`]
@@ -91,7 +92,7 @@ ${resultsForFile}`
     return this.links[document.uri.toString()]
   }
 
-  createDocumentLink(formattedLine, lineNumber, cmd, docURI) {
+  createDocumentLink(formattedLine, lineNumber, searchQuery, docURI) {
     const {
       file,
       line,
@@ -99,7 +100,7 @@ ${resultsForFile}`
     } = formattedLine
     const col = parseInt(column, 10)
     const preamble = `  ${line}:`.length
-    const match = formattedLine.result.match(cmd)
+    const match = formattedLine.result.match(searchQuery.query)
     if (match == null) {
       return
     }
@@ -110,7 +111,8 @@ ${resultsForFile}`
       lineNumber,
       preamble + col + searchTerm
     )
-    const uri = vscode.Uri.parse(`file://${rootPath}/${file}#${line}`)
+
+    const uri = vscode.Uri.parse(`file:///${file}#${line}`)
     this.links[docURI].push(new vscode.DocumentLink(linkRange, uri))
   }
 }
@@ -134,12 +136,19 @@ function openLink(fileName, line) {
   return encodeURI('command:searchy.openFile?' + JSON.stringify(params))
 }
 
-function runCommandSync(cmd) {
-  let cleanedCommand = cmd.replace(/"/g, "\\\"")
+function parseSearchQuery(cmd)
+{
   let searchParts = cmd.match(/^([^:]+):\s?(.*)/);
   let searchPath = searchParts[1];
   let searchQuery = searchParts[2];
   searchPath = vscode.workspace.rootPath + '/' + searchPath;
- 
-  return execSync(`${rgPath} --case-sensitive --line-number --column --hidden -e "${searchQuery}" ${searchPath}`, execOpts)
+
+  return {
+    path: searchPath,
+    query: searchQuery
+  };
+}
+
+function runCommandSync(query) {
+  return execSync(`${rgPath} --case-sensitive --line-number --column --hidden -e "${query.query}" ${query.path}`, execOpts)
 }
