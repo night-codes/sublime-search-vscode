@@ -53,19 +53,57 @@ class SearchyProvider {
       return item != null && item.length > 0
     })
     let resultsByFile = {}
+    let lastFormattedLine;
+
+    var addFormattedLine = function(formattedLine) {
+      if (! resultsByFile.hasOwnProperty(formattedLine.file)) {
+         resultsByFile[formattedLine.file] = [];
+      }
+      
+      resultsByFile[formattedLine.file].push(formattedLine);
+    }
 
     resultsArray.forEach((searchResult) => {
-      let splitLine = searchResult.split(/(.*?):(\d+):(\d+):(.*)/)
-      let fileName = splitLine[1]
-      if (fileName == null || !fileName.length) {
-        return
+      let splitLine = searchResult.match(/(.*?):(\d+):(\d+):(.*)/);
+      let formattedLine;
+      if (splitLine) {
+        formattedLine = formatLine(splitLine)
+      } else if (searchResult == '--') {
+        if (lastFormattedLine) {
+          addFormattedLine({
+            file: lastFormattedLine.file,
+            seperator: true
+          });
+        }
+      } else {
+        let contextLine = searchResult.match(/(.*?)-(\d+)-(.*)/);
+        
+        if (contextLine) {
+          formattedLine = formatContextLine(contextLine)
+        }
       }
-      if (resultsByFile[fileName] == null) {
-        resultsByFile[fileName] = []
+
+      if (formattedLine === undefined) {
+        return;
       }
-      const formattedLine = formatLine(splitLine)
-      resultsByFile[fileName].push(formattedLine)
-    })
+
+      addFormattedLine(formattedLine);
+
+      lastFormattedLine = formattedLine;
+      
+    });
+
+    var removeTrailingSeperators = function() {
+      for (var file in resultsByFile) {
+        let lines = resultsByFile[file];
+        if (lines[lines.length - 1].seperator) {
+          lines.splice(lines.length - 1, 1);
+          resultsByFile[file] = lines;
+        }
+      }
+    };
+
+    removeTrailingSeperators();
 
     let sortedFiles = Object.keys(resultsByFile).sort()
     let lineNumber = 1
@@ -74,8 +112,12 @@ class SearchyProvider {
       lineNumber += 1
       let resultsForFile = resultsByFile[fileName].map((searchResult, index) => {
         lineNumber += 1
-        this.createDocumentLink(searchResult, lineNumber, searchQuery, uriString)
-        return `  ${searchResult.line}: ${searchResult.result}`
+        if (searchResult.seperator) {
+          return '..';
+        } else {
+          this.createDocumentLink(searchResult, lineNumber, searchQuery, uriString)
+          return `  ${searchResult.line}: ${searchResult.result}`
+        }
       }).join('\n')
       lineNumber += 1
       return `
@@ -128,6 +170,15 @@ function formatLine(splitLine) {
   }
 }
 
+function formatContextLine(splitLine) {
+  return {
+    file: splitLine[1],
+    line: splitLine[2],
+    column: undefined,
+    result: splitLine[3]
+  }
+}
+
 function openLink(fileName, line) {
   var params = {
     fileName: fileName,
@@ -150,5 +201,5 @@ function parseSearchQuery(cmd)
 }
 
 function runCommandSync(query) {
-  return execSync(`${rgPath} --case-sensitive --line-number --column --hidden -e "${query.query}" ${query.path}`, execOpts)
+  return execSync(`${rgPath} --case-sensitive --line-number --column --hidden --context=2 -e "${query.query}" ${query.path}`, execOpts)
 }
