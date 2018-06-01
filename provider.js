@@ -54,7 +54,7 @@ class SearchyProvider {
     let resultsByFile = {}
 
     resultsArray.forEach((searchResult) => {
-      let splitLine = searchResult.split(/([^:]+):([^:]+):([^:]+):(.+)/)
+      let splitLine = searchResult.split(/(.*?)(\d+):(\d+):(.*)/)
       let fileName = splitLine[1]
       if (fileName == null || !fileName.length) {
         return
