@@ -18,9 +18,9 @@ Take note of the colon ":" which seperates the folder to search and search text.
 
 ## Differences from malkomalko/searchy
 
-- Improved Window support
+- Improved Windows support
 - Support for context lines
-- Support for 'seperators' for between multiple matches in file
+- Support for 'seperators' between multiple matches in file
 - Added context menu
 - Lots of other improvements
 
