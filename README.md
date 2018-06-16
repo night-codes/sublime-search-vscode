@@ -1,28 +1,30 @@
-# Sublime-like Search for Visual Studio Code / vs code
+# Sublime-like Search for Visual Studio Code (vscode)
 
 ![Screenshot](https://raw.githubusercontent.com/garygreen/sublime-search-vscode/master/sublime-search-vscode.png)
 
 ## Commands
 
-*`searchy.search` (Searchy - Search) - Pop open a dialog to ask for search term, and open the results in a nice read only document.  This uses ripgrep.
+*`sublsearch.search` (SublSearch - Search) - Pop open a dialog to ask for search term, and open the results in a nice read only document.  This uses ripgrep.
 
 ## Usage
 
-By default, code will be searched across the active workspace. If you would like to search in a particular folder, right click the folder in vs code, or manually enter the path relative to the active workspace in the popup:
+`text` - search for the **text** in selected folder
+`^text` - search for the word with case sensivity
+`*text` - select multiple folders for search
+`+go+js+css*^text` - select multiple folders for search with case sensivity only in __*.go__, __*.js__ and __*.css__ files. 
 
-E.g.
-
->  resources/assets: &lt;search for this text&gt;
-
-Take note of the colon ":" which seperates the folder to search and search text.
+Also you can use "**|**" delimiter for let parser know, when text started:
+`*^|*^text` - search `*^text` in multiple folders with case sensivity
+`|*text` - search `*text` 
+`+go+js|text` - search **text** only in __*.go__ and __*.js__ files. 
+`-go-js|text` - search **text** everywere except in __*.go__ and __*.js__ files. 
 
 ## Differences from malkomalko/searchy
 
 - Improved Windows support
-- Support for context lines
-- Support for 'seperators' between multiple matches in file
-- Added context menu
-- Lots of other improvements
+- Context lines
+- Delimiters between multiple matches in file
+- Select from project folders for search
 
 ## Credit
 
