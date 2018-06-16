@@ -13,7 +13,7 @@
 `*text` - select multiple folders for search    
 `+go+js+css*^text` - select multiple folders for search with case sensivity only in __*.go__, __*.js__ and __*.css__ files.     
 
-Also you can use "**|**" delimiter for let parser know, when text started:    
+Also you can use "|" delimiter for let parser know, when text started:    
 `*^|*^text` - search `*^text` in multiple folders with case sensivity    
 `|*text` - search `*text`     
 `+go+js|text` - search **text** only in __*.go__ and __*.js__ files.     
