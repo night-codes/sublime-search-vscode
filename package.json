@@ -42,7 +42,7 @@
     ]
   },
   "dependencies": {
-    "vscode-ripgrep": "0.0.26"
+    "vscode-ripgrep": "1.0.1"
   },
   "__metadata": {
     "publisherDisplayName": "Oleksiy Chechel"
