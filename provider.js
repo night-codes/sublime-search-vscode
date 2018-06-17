@@ -41,13 +41,14 @@ class SublSearchProvider {
 		const extPlus = params.extPlus ? params.extPlus.split(";") : "";
 		const extMinus = params.extMinus ? params.extMinus.split(";") : "";
 		const caseSensitive = params.case == "true";
+		const word = params.word == "true";
 
 		let searchResults = "";
 
 		folders.split(";").forEach(function (path) {
 			let sr = null;
 			try {
-				sr = runCommandSync(query, path, caseSensitive);
+				sr = runCommandSync(query, path, caseSensitive, word);
 			} catch (err) { }
 			if (sr != null && sr.length) {
 				searchResults += sr.toString() + "\n";
@@ -213,6 +214,6 @@ function openLink(fileName, line) {
 	return encodeURI('command:sublsearch.openFile?' + JSON.stringify(params))
 }
 
-function runCommandSync(query, path, caseSensitive) {
-	return execSync(`${rgPath}` + (caseSensitive ? ` --case-sensitive` : ` --ignore-case`) + ` --glob="!.git" --line-number --column --hidden --context=2 -F "${query}" ${path}`, execOpts)
+function runCommandSync(query, path, caseSensitive, word) {
+	return execSync(`${rgPath}` + (caseSensitive ? ` --case-sensitive` : ` --ignore-case`) + (word ? ` -w` : ``) + ` --glob="!.git" --line-number --column --hidden --context=2 -F "${query}" ${path}`, execOpts)
 }

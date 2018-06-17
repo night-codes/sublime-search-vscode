@@ -24,15 +24,39 @@ function activate(context) {
 	function showSublSearchPopup(options) {
 		options = options || {};
 		const editor = window.activeTextEditor;
-		const range = new Range(editor.selection.start, editor.selection.end)
-		const text = editor.document.getText(range) || ''
 
-		var value = options.path ? `${options.path}: ` : '';
+		if (!editor) {
+			return
+		}
+
+		var path = editor.document.uri.fsPath || '';
+
+		// try {
+		// } catch (error) {
+		// 	 window.showInformationMessage(error);
+		// }
+
+		const range = new Range(editor.selection.start, editor.selection.end);
+		const text = editor.document.getText(range) || '';
 		var folders = workspace.workspaceFolders;
-		var foldersStr = [];
+		var foldersSel = [];
+		var foldersUnsel = [];
 		if (folders && folders.length) {
-			folders.forEach(function (el, index) {
-				foldersStr.push(el.uri.fsPath);
+			folders.forEach(function (el) {
+				var picked = el.uri.fsPath.length < path.length && path.substr(0, el.uri.fsPath.length) == el.uri.fsPath;
+				var data = {
+					"description": el.uri.fsPath,
+					"label": el.uri.fsPath.split('/').pop().split('\\').pop(),
+					"picked": picked,
+				};
+				if (picked) {
+					foldersSel.push(data);
+				} else {
+					foldersUnsel.push(data);
+				}
+			});
+			foldersUnsel.forEach(function (el) {
+				foldersSel.push(el);
 			});
 		}
 
@@ -41,7 +65,7 @@ function activate(context) {
 			prompt: "Search in workspace folders",
 			placeHolder: "Search term...",
 			password: false,
-			valueSelection: [value.length, value.length]
+			valueSelection: [0, text.length]
 		}).then((cmd) => {
 			if (cmd && cmd.length) {
 				var q = parseSearchQuery(cmd);
@@ -49,11 +73,20 @@ function activate(context) {
 				q.extMinus = q.extMinus.join(";");
 
 				function send(folders) {
-					if (q.multi) {
-						folders = folders.join(";");
+					if (!Array.isArray(folders)) {
+						folders = [folders];
 					}
+					var str = [];
+					folders.forEach(function (el) {
+						if (typeof el === "string") {
+							str.push(el);
+						} else if (typeof el === "object" && el.description) {
+							str.push(el.description);
+						}
+					})
+					folders = str.join(";");
 
-					var uri = Uri.parse(SublSearchProvider.scheme + `:${fileName(q.query)}.sublsearch?cmd=${q.query}&folders=${folders}&multi=${q.multi}&case=${q.caseSensitive}&extPlus=${q.extPlus}&extMinus=${q.extMinus}`);
+					var uri = Uri.parse(SublSearchProvider.scheme + `:${fileName(q.query)}.sublsearch?cmd=${q.query}&folders=${folders}&word=${q.word}&multi=${q.multi}&case=${q.caseSensitive}&extPlus=${q.extPlus}&extMinus=${q.extMinus}`);
 					return workspace.openTextDocument(uri).then(doc =>
 						window.showTextDocument(doc, {
 							preview: false,
@@ -62,14 +95,12 @@ function activate(context) {
 					)
 				}
 
-				if (foldersStr.length === 1) {
-					if (q.multi)
-						send(foldersStr);
-					else
-						send(foldersStr[0]);
-				} else if (foldersStr.length > 1) {
-					window.showQuickPick(foldersStr, {
+				if (foldersSel.length === 1) {
+					send(foldersSel);
+				} else if (foldersSel.length > 1) {
+					window.showQuickPick(foldersSel, {
 						canPickMany: q.multi,
+						matchOnDescription: true,
 						placeHolder: "Select search folders:"
 					}).then(send);
 				}
@@ -111,6 +142,7 @@ function parseSearchQuery(query) {
 		query: "",
 		caseSensitive: false,
 		multi: false,
+		word: false,
 		extPlus: [],
 		extMinus: [],
 	};
@@ -122,13 +154,15 @@ function parseSearchQuery(query) {
 			if (query[0] == '|') {
 				query = query.substr(1);
 				break
-			} else if (query[0] == '^' || query[0] == '*' || query[0] == '+' || query[0] == '-') {
+			} else if (query[0] == '^' || query[0] == '*' || query[0] == '+' || query[0] == '-' || query[0] == '=') {
 				inExtPlus = false;
 				inExtMinus = false;
 			}
 
 			if (query[0] == '^') {
 				ret.caseSensitive = true;
+			} else if (query[0] == '=') {
+				ret.word = true;
 			} else if (query[0] == '*') {
 				ret.multi = true;
 			} else if (query[0] == '+') {
