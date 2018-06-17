@@ -168,11 +168,13 @@ class SublSearchProvider {
 		} = formattedLine
 		const col = parseInt(column, 10)
 		const preamble = `  ${line}:`.length
-		const match = formattedLine.result.match(new RegExp(query, caseSensitive ? "" : "i"))
-		if (match == null) {
+
+		if (formattedLine.result.indexOf(query) === -1 && (caseSensitive || formattedLine.result.toLowerCase().indexOf(query.toLowerCase()) === -1)) {
 			return false
 		}
-		const searchTerm = match[0].length
+
+
+		const searchTerm = query.length
 		const linkRange = new vscode.Range(
 			lineNumber,
 			preamble + col,
