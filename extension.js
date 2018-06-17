@@ -1,6 +1,7 @@
 const {
 	commands,
 	Disposable,
+	Range,
 	languages,
 	Uri,
 	window,
@@ -22,6 +23,10 @@ function activate(context) {
 
 	function showSublSearchPopup(options) {
 		options = options || {};
+		const editor = window.activeTextEditor;
+		const range = new Range(editor.selection.start, editor.selection.end)
+		const text = editor.document.getText(range) || ''
+
 		var value = options.path ? `${options.path}: ` : '';
 		var folders = workspace.workspaceFolders;
 		var foldersStr = [];
@@ -32,8 +37,8 @@ function activate(context) {
 		}
 
 		window.showInputBox({
-			value: value,
-			prompt: null,
+			value: text,
+			prompt: "Search in workspace folders",
 			placeHolder: "Search term...",
 			password: false,
 			valueSelection: [value.length, value.length]
@@ -94,7 +99,7 @@ function activate(context) {
 }
 exports.activate = activate
 
-function deactivate() {}
+function deactivate() { }
 exports.deactivate = deactivate
 
 function fileName(cmd) {

@@ -29,7 +29,7 @@ class SublSearchProvider {
 		return 'sublsearch'
 	}
 
-	onDidChange() {}
+	onDidChange() { }
 
 	provideTextDocumentContent(uri) {
 		let self = this;
@@ -48,7 +48,7 @@ class SublSearchProvider {
 			let sr = null;
 			try {
 				sr = runCommandSync(query, path, caseSensitive);
-			} catch (err) {}
+			} catch (err) { }
 			if (sr != null && sr.length) {
 				searchResults += sr.toString() + "\n";
 			}
@@ -214,5 +214,5 @@ function openLink(fileName, line) {
 }
 
 function runCommandSync(query, path, caseSensitive) {
-	return execSync(`${rgPath}` + (caseSensitive ? ` --case-sensitive` : ` --ignore-case`) + ` --line-number --column --hidden --context=2 -e "${query}" ${path}`, execOpts)
+	return execSync(`${rgPath}` + (caseSensitive ? ` --case-sensitive` : ` --ignore-case`) + ` --glob="!.git" --line-number --column --hidden --context=2 -F "${query}" ${path}`, execOpts)
 }
