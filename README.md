@@ -8,17 +8,17 @@
 
 ## Usage
 
-`text` - search **text** in selected folder
-`^text` - search **text** with case sensivity
-`=text` - search **text** as whole word
-`*text` - select multiple folders for search
-`+go+js+css*^text` - select multiple folders for search with case sensivity only in __*.go__, __*.js__ and __*.css__ files.
+- `text` - search **text** in selected folder
+- `^text` - search **text** with case sensivity
+- `=text` - search **text** as whole word
+- `+go+js+css^text` - search with case sensivity only in __*.go__, __*.js__ and __*.css__ files.
 
 Also you can use "|" delimiter for let parser know, when text started:
-`*^|*^text` - search **"*^text"** in multiple folders with case sensivity
-`|*text` - search **"*text"**
-`+go+js|text` - search **"text"** only in __*.go__ and __*.js__ files.
-`-go-js=|text` - search **"text"** as whole word everywere except in __*.go__ and __*.js__ files.
+- `^|^text` - search **"^text"** with case sensivity
+- `|=^text` - search **"=^text"**
+- `+go+js|text` - search **"text"** only in __*.go__ and __*.js__ files.
+- `-go-js=|text` - search **"text"** as whole word everywere except in __*.go__ and __*.js__ files.
+
 
 ## Differences from malkomalko/searchy
 

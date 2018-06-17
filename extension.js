@@ -24,20 +24,18 @@ function activate(context) {
 	function showSublSearchPopup(options) {
 		options = options || {};
 		const editor = window.activeTextEditor;
-
 		if (!editor) {
 			return
 		}
 
 		var path = editor.document.uri.fsPath || '';
-
-		// try {
-		// } catch (error) {
-		// 	 window.showInformationMessage(error);
-		// }
-
 		const range = new Range(editor.selection.start, editor.selection.end);
-		const text = editor.document.getText(range) || '';
+		var text = editor.document.getText(range) || '';
+		var selectionStart = 0;
+		if (parseSearchQuery(text).query.length < text.length) {
+			text = "|" + text
+			selectionStart = 1;
+		}
 		var folders = workspace.workspaceFolders;
 		var foldersSel = [];
 		var foldersUnsel = [];
@@ -65,7 +63,7 @@ function activate(context) {
 			prompt: "Search in workspace folders",
 			placeHolder: "Search term...",
 			password: false,
-			valueSelection: [0, text.length]
+			valueSelection: [selectionStart, text.length]
 		}).then((cmd) => {
 			if (cmd && cmd.length) {
 				var q = parseSearchQuery(cmd);
@@ -73,6 +71,9 @@ function activate(context) {
 				q.extMinus = q.extMinus.join(";");
 
 				function send(folders) {
+					if (!folders || (Array.isArray(folders) && !folders.length)) {
+						return;
+					}
 					if (!Array.isArray(folders)) {
 						folders = [folders];
 					}
@@ -141,7 +142,7 @@ function parseSearchQuery(query) {
 	let ret = {
 		query: "",
 		caseSensitive: false,
-		multi: false,
+		multi: true,
 		word: false,
 		extPlus: [],
 		extMinus: [],
@@ -154,7 +155,7 @@ function parseSearchQuery(query) {
 			if (query[0] == '|') {
 				query = query.substr(1);
 				break
-			} else if (query[0] == '^' || query[0] == '*' || query[0] == '+' || query[0] == '-' || query[0] == '=') {
+			} else if (query[0] == '^' || query[0] == '+' || query[0] == '-' || query[0] == '=') {
 				inExtPlus = false;
 				inExtMinus = false;
 			}
@@ -163,8 +164,6 @@ function parseSearchQuery(query) {
 				ret.caseSensitive = true;
 			} else if (query[0] == '=') {
 				ret.word = true;
-			} else if (query[0] == '*') {
-				ret.multi = true;
 			} else if (query[0] == '+') {
 				inExtPlus = true;
 				ret.extPlus.push("");
