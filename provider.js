@@ -216,6 +216,10 @@ function openLink(fileName, line) {
 	return encodeURI('command:sublsearch.openFile?' + JSON.stringify(params))
 }
 
+function quotation(str) {
+	return str.split("\"").join("\\\"");
+};
+
 function runCommandSync(query, path, caseSensitive, word) {
-	return execSync(`${rgPath}` + (caseSensitive ? ` --case-sensitive` : ` --ignore-case`) + (word ? ` -w` : ``) + ` --glob="!.git" --line-number --column --hidden --context=2 -F "${query}" ${path}`, execOpts)
+	return execSync(`${rgPath}` + (caseSensitive ? ` --case-sensitive` : ` --ignore-case`) + (word ? ` -w` : ``) + ` --glob="!.git" --line-number --column --hidden --context=2 -F "${quotation(query)}" ${path}`, execOpts)
 }
