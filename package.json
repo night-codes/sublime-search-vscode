@@ -2,7 +2,7 @@
   "name": "sublime-search-vscode",
   "displayName": "SublimeSearch",
   "description": "Sublime-like search for vscode.",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "publisher": "night-codes",
   "repository": "https://github.com/night-codes/sublime-search-vscode",
   "engines": {

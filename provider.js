@@ -217,7 +217,7 @@ function openLink(fileName, line) {
 }
 
 function quotation(str) {
-	return str.split("\"").join("\\\"");
+	return str.split("\"").join("\\\"").split("$").join("\\$");
 };
 
 function runCommandSync(query, path, caseSensitive, word) {
