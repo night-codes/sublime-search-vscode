@@ -182,7 +182,7 @@ class SublSearchProvider {
 			preamble + col + searchTerm
 		)
 
-		const uri = vscode.Uri.parse(`file://${file}#${line}`)
+		const uri = vscode.Uri.parse(`file:///${file}#${line}`)
 		this.links[docURI].push(new vscode.DocumentLink(linkRange, uri))
 		return true
 	}
